@@ -33,13 +33,11 @@ class DetailMedalActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GamingProfileTheme {
-                val state by viewModel.state.collectAsState()
-
-                when (state) {
+                when (val state = viewModel.state.collectAsState().value) {
                     DetailMedalUIState.Loading -> LoadingScreen(Modifier.fillMaxSize())
                     is DetailMedalUIState.Success ->
                         DetailMedalScreen(
-                            Modifier, (state as DetailMedalUIState.Success).medalUI
+                            Modifier, state.medalUI, showCounterRoll = state.isAddingPoints
                         ) { viewModel.onIncrementPoints() }
                 }
             }

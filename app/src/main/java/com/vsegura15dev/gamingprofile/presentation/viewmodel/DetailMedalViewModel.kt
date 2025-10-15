@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.vsegura15dev.gamingprofile.domain.usecase.IncrementPoints
 import com.vsegura15dev.gamingprofile.presentation.model.MedalUI
 import com.vsegura15dev.gamingprofile.presentation.model.mapper.toDomain
+import com.vsegura15dev.gamingprofile.presentation.model.mapper.toPresentation
 import com.vsegura15dev.gamingprofile.presentation.state.DetailMedalUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -34,8 +36,9 @@ class DetailMedalViewModel @Inject constructor(
         viewModelScope.launch {
             val currentState = internalState.value as? DetailMedalUIState.Success ?: return@launch
             internalState.emit(currentState.copy(isAddingPoints = true))
-            incrementPoints(currentState.medalUI.toDomain())
-            internalState.emit(currentState.copy(isAddingPoints = false))
+            val medalUpdated = incrementPoints(currentState.medalUI.toDomain()).toPresentation()
+            delay(3000L)
+            internalState.emit(currentState.copy(isAddingPoints = false, medalUI = medalUpdated))
         }
     }
 }
