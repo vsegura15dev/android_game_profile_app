@@ -1,7 +1,6 @@
 package com.vsegura15dev.gamingprofile.data.reader
 
 import android.content.Context
-import androidx.annotation.RawRes
 import com.vsegura15dev.gamingprofile.R
 import com.vsegura15dev.gamingprofile.data.dto.MedalDTO
 import dagger.hilt.android.qualifiers.ApplicationContext

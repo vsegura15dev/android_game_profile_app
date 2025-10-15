@@ -3,6 +3,8 @@ package com.vsegura15dev.gamingprofile.data.dto.mapper
 import com.vsegura15dev.gamingprofile.data.dto.MedalDTO
 import com.vsegura15dev.gamingprofile.domain.model.Medal
 
+internal fun List<MedalDTO>.mapToDomain() = map { it.toDomain() }
+
 internal fun MedalDTO.toDomain() =
     Medal(
         id = id,
