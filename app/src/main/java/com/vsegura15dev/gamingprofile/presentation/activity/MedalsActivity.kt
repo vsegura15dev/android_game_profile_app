@@ -6,59 +6,44 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.vsegura15dev.gamingprofile.presentation.model.MedalUI
 import com.vsegura15dev.gamingprofile.presentation.screen.LoadingScreen
 import com.vsegura15dev.gamingprofile.presentation.screen.MedalsScreen
-import com.vsegura15dev.gamingprofile.presentation.state.UIState
+import com.vsegura15dev.gamingprofile.presentation.state.MedalsUIState
 import com.vsegura15dev.gamingprofile.presentation.theme.GamingProfileTheme
-import com.vsegura15dev.gamingprofile.presentation.viewmodel.MedalViewModel
+import com.vsegura15dev.gamingprofile.presentation.viewmodel.MedalsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MedalViewModel by viewModels<MedalViewModel>()
+    private val viewModel: MedalsViewModel by viewModels<MedalsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             GamingProfileTheme {
-
                 val state by viewModel.state.collectAsState()
 
                 when (state) {
-                    UIState.Loading -> LoadingScreen(Modifier.fillMaxSize())
-                    is UIState.Success ->
+                    MedalsUIState.Loading -> LoadingScreen(Modifier.fillMaxSize())
+                    is MedalsUIState.Success ->
                         MedalsScreen(
                             modifier = Modifier.fillMaxSize(),
-                            medals = (state as UIState.Success).medals
+                            medals = (state as MedalsUIState.Success).medals,
+                            onMedalClick = ::navigateToDetail,
+                            onBackClick = {}
                         )
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GamingProfileTheme {
-        Greeting("Android")
+    private fun navigateToDetail(medal: MedalUI) {
+        startActivity(DetailMedalActivity.intentTo(this, medal))
     }
 }

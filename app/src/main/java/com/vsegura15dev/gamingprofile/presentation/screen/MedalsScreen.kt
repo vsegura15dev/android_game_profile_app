@@ -2,6 +2,7 @@ package com.vsegura15dev.gamingprofile.presentation.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,7 @@ import com.vsegura15dev.gamingprofile.presentation.model.MedalUI
 fun MedalsScreen(
     modifier: Modifier = Modifier,
     medals: List<MedalUI>,
+    onMedalClick: (MedalUI) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     Scaffold(
@@ -74,18 +76,25 @@ fun MedalsScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(medals) { achievement ->
-                AchievementItem(achievement)
+            items(medals) { medal ->
+                MedalItem(
+                    Modifier.clickable(
+                        enabled = medal.isLocked.not(),
+                        "",
+                        null,
+                        onClick = { onMedalClick(medal) }),
+                    medal
+                )
             }
         }
     }
 }
 
 @Composable
-fun AchievementItem(medal: MedalUI) {
+fun MedalItem(modifier: Modifier, medal: MedalUI) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(70.dp)
+        modifier = modifier.width(70.dp)
     ) {
         Box(contentAlignment = Alignment.TopEnd) {
             Image(
