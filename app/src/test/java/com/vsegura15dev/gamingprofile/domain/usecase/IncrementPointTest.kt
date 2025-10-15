@@ -1,6 +1,7 @@
 package com.vsegura15dev.gamingprofile.domain.usecase
 
 import com.vsegura15dev.gamingprofile.domain.MAX_RANDOM_VALUE
+import com.vsegura15dev.gamingprofile.domain.NEXT_LVL_REACH
 import com.vsegura15dev.gamingprofile.domain.exception.MaxLevelReachedException
 import com.vsegura15dev.gamingprofile.domain.generator.RandomNumberGenerator
 import com.vsegura15dev.gamingprofile.domain.model.Medal
@@ -20,7 +21,7 @@ class IncrementPointTest {
     private lateinit var numberGenerator: RandomNumberGenerator
 
     @InjectMockKs
-    private lateinit var useCase: IncrementPoint
+    private lateinit var useCase: IncrementPoints
 
     @Before
     fun setUp() {
@@ -63,9 +64,8 @@ class IncrementPointTest {
 
             useCase(
                 medal = medal.copy(
-                    level = medal.level,
-                    isLocked = true,
-                    points = MAX_RANDOM_VALUE
+                    level = medal.maxLevel,
+                    points = NEXT_LVL_REACH
                 )
             )
         }

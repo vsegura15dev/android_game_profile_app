@@ -6,13 +6,14 @@ import com.vsegura15dev.gamingprofile.domain.NEXT_LVL_REACH
 import com.vsegura15dev.gamingprofile.domain.exception.MaxLevelReachedException
 import com.vsegura15dev.gamingprofile.domain.generator.RandomNumberGenerator
 import com.vsegura15dev.gamingprofile.domain.model.Medal
+import javax.inject.Inject
 
-class IncrementPoint constructor(
+class IncrementPoints @Inject constructor(
     private val randomNumberGenerator: RandomNumberGenerator
 ) {
 
     suspend operator fun invoke(medal: Medal): Medal {
-        if (medal.isLocked) throw MaxLevelReachedException()
+        if (medal.level == medal.maxLevel && medal.points >= NEXT_LVL_REACH) throw MaxLevelReachedException()
 
         val newPoints =
             medal.points + randomNumberGenerator.generateRandomUntilMax(MAX_RANDOM_VALUE)
