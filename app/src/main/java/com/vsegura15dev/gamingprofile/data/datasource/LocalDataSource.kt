@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.vsegura15dev.gamingprofile.data.dto.MedalDTO
+import com.vsegura15dev.gamingprofile.data.exception.SavingMedalFailedException
 import com.vsegura15dev.gamingprofile.data.reader.JsonReader
 import com.vsegura15dev.gamingprofile.di.DispatcherIO
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -47,8 +48,15 @@ class LocalDataSource @Inject constructor(
         }
     }
 
-    override fun saveMedal(medal: MedalDTO) {
-
+    override suspend fun saveMedal(medal: MedalDTO) {
+        Log.d(this::class.java.simpleName, "data on save: $medals")
+        if (medals.isEmpty()) throw SavingMedalFailedException()
+        medals.indexOfFirst { it.id == medal.id }.takeIf {
+            it >= 0
+        }?.let {
+            val newMedals = medals.toMutableList().apply { set(it, medal) }.toList()
+            saveMedals(newMedals)
+        } ?: throw SavingMedalFailedException()
     }
 
     override suspend fun saveMedals(medals: List<MedalDTO>) {

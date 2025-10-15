@@ -7,7 +7,7 @@ interface MedalDataSource {
 
     fun getMedals(): Flow<List<MedalDTO>?>
 
-    fun saveMedal(medal: MedalDTO)
+    suspend fun saveMedal(medal: MedalDTO)
 
     suspend fun saveMedals(medals: List<MedalDTO>)
 }

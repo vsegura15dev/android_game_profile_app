@@ -14,7 +14,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -26,11 +28,19 @@ class MedalDI {
     }
 
     @Provides
+    @DispatcherIO
+    fun providesIODispatcher(): CoroutineDispatcher {
+        return Dispatchers.IO
+    }
+
+    @Provides
+    @Singleton
     fun providesLocalDataSourceImpl(
         @ApplicationContext context: Context,
-        jsonReader: JsonReader
+        jsonReader: JsonReader,
+        @DispatcherIO dispatcher: CoroutineDispatcher
     ): LocalDataSource {
-        return LocalDataSource(context, jsonReader, Dispatchers.IO)
+        return LocalDataSource(context, jsonReader, dispatcher)
     }
 }
 
