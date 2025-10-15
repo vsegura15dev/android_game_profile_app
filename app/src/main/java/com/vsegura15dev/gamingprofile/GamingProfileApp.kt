@@ -1,7 +1,7 @@
 package com.vsegura15dev.gamingprofile
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class GamingProfileApp: Application() {
-
-}
+@HiltAndroidApp
+class GamingProfileApp: Application()
