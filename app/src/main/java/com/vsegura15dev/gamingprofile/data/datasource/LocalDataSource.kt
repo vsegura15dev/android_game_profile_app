@@ -64,4 +64,8 @@ class LocalDataSource @Inject constructor(
             prefs[medalsKey] = Json.encodeToString(medals)
         }
     }
+
+    override suspend fun resetMedals() {
+       saveMedals(jsonReader.loadInitMedals())
+    }
 }

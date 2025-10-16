@@ -25,4 +25,6 @@ class MedalRepositoryImpl @Inject constructor(
     override suspend fun saveMedals(medals: List<Medal>) {
         localDataSource.saveMedals(medals.map { it.toDTO() })
     }
+
+    override suspend fun resetMedals() = localDataSource.resetMedals()
 }

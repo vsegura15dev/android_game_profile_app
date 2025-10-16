@@ -7,4 +7,5 @@ interface MedalRepository {
     fun getMedals(): Flow<List<Medal>>
     suspend fun saveMedal(medal: Medal)
     suspend fun saveMedals(medals: List<Medal>)
+    suspend fun resetMedals()
 }
