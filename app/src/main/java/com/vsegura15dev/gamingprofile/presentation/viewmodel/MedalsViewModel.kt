@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.vsegura15dev.gamingprofile.di.DispatcherIO
 import com.vsegura15dev.gamingprofile.domain.usecase.GetMedals
 import com.vsegura15dev.gamingprofile.domain.usecase.ResetMedals
-import com.vsegura15dev.gamingprofile.presentation.model.mapper.toPresentation
+import com.vsegura15dev.gamingprofile.presentation.model.mapper.MedalUIMapper
 import com.vsegura15dev.gamingprofile.presentation.state.MedalsUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,6 +19,7 @@ import javax.inject.Inject
 class MedalsViewModel @Inject constructor(
     private val getMedals: GetMedals,
     private val resetMedals: ResetMedals,
+    private val mapper: MedalUIMapper,
     @DispatcherIO private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -29,7 +30,11 @@ class MedalsViewModel @Inject constructor(
         viewModelScope.launch(ioDispatcher) {
             delay(3000L)
             getMedals().collect {
-                val medals = it.map { medal -> medal.toPresentation() }
+                val medals = it.map { medal ->
+                    with(mapper) {
+                        medal.toPresentation()
+                    }
+                }
                 internalState.emit(MedalsUIState.Success(medals))
             }
         }
