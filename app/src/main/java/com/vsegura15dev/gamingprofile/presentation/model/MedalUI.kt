@@ -26,6 +26,7 @@ data class MedalUI(
     val animationType: String
 ) : Serializable {
 
-    val progress = level.toFloat()/maxLevel
-    val pointProgress = points.toFloat()/ NEXT_LVL_REACH
+    val progress = level.toFloat() / maxLevel
+    val pointProgress = points.toFloat() / NEXT_LVL_REACH
+    val isMaxLevelReached = maxLevel == level && pointProgress == 1f
 }

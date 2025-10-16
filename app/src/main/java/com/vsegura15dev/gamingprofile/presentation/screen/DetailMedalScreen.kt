@@ -33,6 +33,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.vsegura15dev.gamingprofile.R
 import com.vsegura15dev.gamingprofile.presentation.model.MedalUI
+import com.vsegura15dev.gamingprofile.presentation.screen.animation.LeveLReachedDialog
 import com.vsegura15dev.gamingprofile.presentation.screen.component.MedalLevel
 import com.vsegura15dev.gamingprofile.presentation.screen.component.MedalPointProgress
 import kotlinx.coroutines.delay
@@ -42,7 +43,11 @@ fun DetailMedalScreen(
     modifier: Modifier = Modifier,
     medal: MedalUI,
     showCounterRoll: Boolean = false,
-    onCTAClicked: () -> Unit = {},
+    showLevelUpDialog: Boolean = false,
+    showMaxLevelReached: Boolean = false,
+    onCloseLevelUpDialog: () -> Unit = {},
+    onCloseMaxLevelReached: () -> Unit = {},
+    onCTAClicked: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -113,6 +118,7 @@ fun DetailMedalScreen(
 
             Button(
                 onClick = onCTAClicked,
+                enabled = medal.isLocked.not() && medal.isMaxLevelReached.not(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                 shape = RoundedCornerShape(30.dp),
                 modifier = Modifier
@@ -120,7 +126,11 @@ fun DetailMedalScreen(
                     .height(48.dp)
             ) {
                 Text(
-                    "Obten más puntos!",
+                    if (medal.isMaxLevelReached) {
+                        "Llegaste al máximo!"
+                    } else {
+                        "Obten más puntos!"
+                    },
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
@@ -130,6 +140,24 @@ fun DetailMedalScreen(
 
         if (showCounterRoll) {
             CounterRollDialog()
+        }
+
+        if (showLevelUpDialog) {
+            LeveLReachedDialog(
+                icon = medal.icon,
+                newLvl = medal.level,
+                message = medal.nextLevelGoal,
+                onClose = onCloseLevelUpDialog
+            )
+        }
+
+        if (showMaxLevelReached) {
+            LeveLReachedDialog(
+                icon = medal.icon,
+                newLvl = medal.level,
+                message = "Lo lograste, alcanzaste el máximo nivel y puntaje!",
+                onClose = onCloseMaxLevelReached
+            )
         }
     }
 }
@@ -142,12 +170,12 @@ private fun CounterRollDialog() {
             dismissOnClickOutside = false
         )
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .width(120.dp)
                 .background(Color.White, shape = RoundedCornerShape(10.dp))
                 .padding(20.dp),
-            contentAlignment = Alignment.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             val number = remember { mutableIntStateOf(0) }
@@ -158,9 +186,20 @@ private fun CounterRollDialog() {
                 }
             }
             Text(
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier,
                 text = number.intValue.toString(),
                 style = MaterialTheme.typography.headlineLarge
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+                text = "Hoy es mi día de suerte",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black
             )
         }
     }

@@ -101,7 +101,7 @@ fun MedalsScreen(
                     items(medals) { medal ->
                         MedalItem(
                             Modifier.clickable(
-                                enabled = medal.isLocked.not(),
+                                enabled = true,
                                 "",
                                 null,
                                 onClick = { onMedalClick(medal) }),

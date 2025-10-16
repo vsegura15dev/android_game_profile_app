@@ -5,20 +5,23 @@ import com.vsegura15dev.gamingprofile.domain.NEXT_LVL_REACH
 import com.vsegura15dev.gamingprofile.domain.exception.MaxLevelReachedException
 import com.vsegura15dev.gamingprofile.domain.generator.RandomNumberGenerator
 import com.vsegura15dev.gamingprofile.domain.model.Medal
+import com.vsegura15dev.gamingprofile.domain.repository.MedalRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
-class IncrementPointTest {
+class IncrementPointsTest {
 
     @RelaxedMockK
     private lateinit var numberGenerator: RandomNumberGenerator
+
+    @RelaxedMockK
+    private lateinit var repository: MedalRepository
 
     @InjectMockKs
     private lateinit var useCase: IncrementPoints
@@ -83,7 +86,6 @@ class IncrementPointTest {
                 )
             )
 
-            assertTrue(result.isLocked)
             assertEquals(medal.maxLevel, result.level)
             assertEquals(MAX_RANDOM_VALUE, result.points)
         }

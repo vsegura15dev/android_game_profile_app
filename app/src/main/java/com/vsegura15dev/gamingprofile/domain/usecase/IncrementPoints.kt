@@ -23,8 +23,7 @@ class IncrementPoints @Inject constructor(
         val newMedal = when {
             medal.level == medal.maxLevel -> {
                 medal.copy(
-                    points = if (newPoints > NEXT_LVL_REACH) NEXT_LVL_REACH else newPoints,
-                    isLocked = true
+                    points = if (newPoints > NEXT_LVL_REACH) NEXT_LVL_REACH else newPoints
                 )
             }
 
