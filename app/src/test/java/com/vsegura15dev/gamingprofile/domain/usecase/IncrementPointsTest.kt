@@ -7,6 +7,7 @@ import com.vsegura15dev.gamingprofile.domain.generator.RandomNumberGenerator
 import com.vsegura15dev.gamingprofile.domain.model.Medal
 import com.vsegura15dev.gamingprofile.domain.repository.MedalRepository
 import io.mockk.MockKAnnotations
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
@@ -42,6 +43,10 @@ class IncrementPointsTest {
 
             assertEquals(medal.level, newMedal.level)
             assertEquals(medal.points.plus(pointsToAdd), newMedal.points)
+
+            coVerify(exactly = 1) {
+                repository.saveMedal(newMedal)
+            }
         }
 
 
@@ -56,6 +61,10 @@ class IncrementPointsTest {
 
             assertEquals(medal.level.plus(1), newMedal.level)
             assertEquals(0, newMedal.points)
+
+            coVerify(exactly = 1) {
+                repository.saveMedal(newMedal)
+            }
         }
 
     @Test(expected = MaxLevelReachedException::class)
@@ -71,6 +80,10 @@ class IncrementPointsTest {
                     points = NEXT_LVL_REACH
                 )
             )
+
+            coVerify(exactly = 0) {
+                repository.saveMedal(any())
+            }
         }
 
     @Test
@@ -88,6 +101,10 @@ class IncrementPointsTest {
 
             assertEquals(medal.maxLevel, result.level)
             assertEquals(MAX_RANDOM_VALUE, result.points)
+
+            coVerify(exactly = 1) {
+                repository.saveMedal(any())
+            }
         }
 
 
