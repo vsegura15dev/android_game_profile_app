@@ -1,6 +1,5 @@
 package com.vsegura15dev.gamingprofile.presentation.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,9 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,8 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +33,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.vsegura15dev.gamingprofile.R
 import com.vsegura15dev.gamingprofile.presentation.model.MedalUI
+import com.vsegura15dev.gamingprofile.presentation.screen.component.MedalLevel
+import com.vsegura15dev.gamingprofile.presentation.screen.component.MedalPointProgress
 import kotlinx.coroutines.delay
 
 @Composable
@@ -58,25 +55,13 @@ fun DetailMedalScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier.padding(24.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(100.dp)
-                    .background(Color(0xFFF9FAFB), shape = RoundedCornerShape(16.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Image(
-                    painter = painterResource(id = medal.icon),
-                    contentDescription = medal.name,
-                    modifier = Modifier
-                        .size(256.dp)
-                        .background(
-                            Color(0xFF2C2C2E),
-                            shape = MaterialTheme.shapes.medium
-                        ),
-                    contentScale = ContentScale.Fit
-                )
-            }
+            MedalLevel(
+                modifier = Modifier,
+                level = medal.level,
+                progress = medal.progress,
+                imageId = medal.icon,
+                progressColor = medal.progressColor,
+            )
 
             Surface(
                 shape = RoundedCornerShape(16.dp),
@@ -119,9 +104,12 @@ fun DetailMedalScreen(
                 }
             }
 
-            Text(modifier = Modifier.wrapContentSize(),
-                text = "Puntos: ${medal.points}",
-                style = MaterialTheme.typography.headlineMedium)
+            MedalPointProgress(
+                modifier = Modifier.fillMaxWidth(),
+                progressColor = medal.progressColor,
+                progress = medal.pointProgress,
+                label = "${medal.points} ptos"
+            )
 
             Button(
                 onClick = onCTAClicked,
@@ -132,7 +120,7 @@ fun DetailMedalScreen(
                     .height(48.dp)
             ) {
                 Text(
-                    "Get your points!",
+                    "Obten más puntos!",
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
@@ -197,7 +185,7 @@ fun DetailMedalScreenPreview() {
                 progressColor = Color(0xFFE91E63),
                 progressColorHex = "",
                 level = 1,
-                points = 0,
+                points = 89,
                 maxLevel = 10,
                 reward = "50 monedas",
                 unlockedAt = "Racha de 3 días",

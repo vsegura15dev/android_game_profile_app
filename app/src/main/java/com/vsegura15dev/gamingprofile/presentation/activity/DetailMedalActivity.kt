@@ -10,7 +10,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.vsegura15dev.gamingprofile.presentation.model.MedalUI
 import com.vsegura15dev.gamingprofile.presentation.screen.DetailMedalScreen

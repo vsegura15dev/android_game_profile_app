@@ -1,6 +1,7 @@
 package com.vsegura15dev.gamingprofile.presentation.model
 
 import androidx.compose.ui.graphics.Color
+import com.vsegura15dev.gamingprofile.domain.NEXT_LVL_REACH
 import java.io.Serializable
 
 data class MedalUI(
@@ -23,4 +24,8 @@ data class MedalUI(
     val nextLevelGoal: String,
     val isLocked: Boolean,
     val animationType: String
-) : Serializable
+) : Serializable {
+
+    val progress = level.toFloat()/maxLevel
+    val pointProgress = points.toFloat()/ NEXT_LVL_REACH
+}
