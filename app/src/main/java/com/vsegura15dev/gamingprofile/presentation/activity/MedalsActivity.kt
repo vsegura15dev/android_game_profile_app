@@ -36,6 +36,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize(),
                             medals = (state as MedalsUIState.Success).medals,
                             onMedalClick = ::navigateToDetail,
+                            onAvatarClick = { viewModel.onResetMedals() },
                             onBackClick = {}
                         )
                 }
