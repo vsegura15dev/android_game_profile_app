@@ -2,21 +2,25 @@ package com.vsegura15dev.gamingprofile.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vsegura15dev.gamingprofile.di.DispatcherIO
 import com.vsegura15dev.gamingprofile.domain.usecase.IncrementPoints
 import com.vsegura15dev.gamingprofile.presentation.model.MedalUI
 import com.vsegura15dev.gamingprofile.presentation.model.mapper.toDomain
 import com.vsegura15dev.gamingprofile.presentation.model.mapper.toPresentation
 import com.vsegura15dev.gamingprofile.presentation.state.DetailMedalUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailMedalViewModel @Inject constructor(
-    private val incrementPoints: IncrementPoints
+    private val incrementPoints: IncrementPoints,
+    @DispatcherIO private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private lateinit var medal: MedalUI
@@ -32,13 +36,37 @@ class DetailMedalViewModel @Inject constructor(
         }
     }
 
-    fun onIncrementPoints() {
+    fun onIncrementPoints() =
         viewModelScope.launch {
             val currentState = internalState.value as? DetailMedalUIState.Success ?: return@launch
             internalState.emit(currentState.copy(isAddingPoints = true))
-            val medalUpdated = incrementPoints(currentState.medalUI.toDomain()).toPresentation()
-            delay(3000L)
-            internalState.emit(currentState.copy(isAddingPoints = false, medalUI = medalUpdated))
+            withContext(ioDispatcher) {
+                delay(3000L)
+                val medalUpdated = incrementPoints(currentState.medalUI.toDomain()).toPresentation()
+                val isNewLvl = medalUpdated.level > currentState.medalUI.level
+                medalUpdated.isMaxLevelReached
+                internalState.emit(
+                    currentState.copy(
+                        isAddingPoints = false,
+                        medalUI = medalUpdated,
+                        showLvlUpDialog = isNewLvl,
+                        showMaxLvlDialog = medalUpdated.isMaxLevelReached
+                    )
+                )
+            }
+        }
+
+    fun onCloseLvlUpDialog() {
+        viewModelScope.launch {
+            val currentState = internalState.value as? DetailMedalUIState.Success ?: return@launch
+            internalState.emit(currentState.copy(showLvlUpDialog = false))
+        }
+    }
+
+    fun onCloseMaxLvlReachedDialog() {
+        viewModelScope.launch {
+            val currentState = internalState.value as? DetailMedalUIState.Success ?: return@launch
+            internalState.emit(currentState.copy(showMaxLvlDialog = false))
         }
     }
 }

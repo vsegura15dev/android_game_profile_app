@@ -11,6 +11,9 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.vsegura15dev.gamingprofile.presentation.model.MedalUI
 import com.vsegura15dev.gamingprofile.presentation.screen.DetailMedalScreen
 import com.vsegura15dev.gamingprofile.presentation.screen.LoadingScreen
@@ -18,17 +21,21 @@ import com.vsegura15dev.gamingprofile.presentation.state.DetailMedalUIState
 import com.vsegura15dev.gamingprofile.presentation.theme.GamingProfileTheme
 import com.vsegura15dev.gamingprofile.presentation.viewmodel.DetailMedalViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailMedalActivity : ComponentActivity() {
 
     private val viewModel: DetailMedalViewModel by viewModels<DetailMedalViewModel>()
 
+    private var executeJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val medal = getMedal()
-        viewModel.init(medal!!)
+        getMedal()?.let { viewModel.init(it) }
+
         enableEdgeToEdge()
         setContent {
             GamingProfileTheme {
@@ -36,11 +43,31 @@ class DetailMedalActivity : ComponentActivity() {
                     DetailMedalUIState.Loading -> LoadingScreen(Modifier.fillMaxSize())
                     is DetailMedalUIState.Success ->
                         DetailMedalScreen(
-                            Modifier, state.medalUI, showCounterRoll = state.isAddingPoints
-                        ) { viewModel.onIncrementPoints() }
+                            Modifier, state.medalUI,
+                            showCounterRoll = state.isAddingPoints,
+                            showLevelUpDialog = state.showLvlUpDialog,
+                            onCloseLevelUpDialog = { viewModel.onCloseLvlUpDialog() },
+                            onCloseMaxLevelReached = { viewModel.onCloseMaxLvlReachedDialog()}
+                        ) {
+                            lifecycleScope.launch {
+                                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                                    executeJob = viewModel.onIncrementPoints()
+                                    executeJob?.invokeOnCompletion {
+                                        if (it == null) {
+                                            this@launch.cancel()
+                                        }
+                                    }
+                                }
+                            }
+                        }
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        executeJob?.cancel()
     }
 
     private fun getMedal() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
